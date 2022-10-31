@@ -7,6 +7,7 @@
 // - https://meetingcpp.com/mcpp/slides/2021/Type%20Erasure%20-%20A%20Design%20Analysis9268.pdf
 // - https://www.youtube.com/watch?v=4eeESJQk-mw
 
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <vector>
