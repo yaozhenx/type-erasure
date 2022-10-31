@@ -34,6 +34,12 @@ class Shape;
 void serialize(const Shape& shape);
 void draw(const Shape& shape);
 
+template <typename T>
+void serialize(const T&) = delete;
+
+template <typename T>
+void draw(const T&) = delete;
+
 class Shape {
   friend void serialize(const Shape& shape) {
     shape.pimpl_->serialize();
