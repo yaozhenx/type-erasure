@@ -73,7 +73,6 @@ class Shape {
     virtual std::unique_ptr<ShapeConcept> clone() const = 0;
   };
 
-
   template <typename T>
   class ShapeModel : public ShapeConcept {
     T object_;

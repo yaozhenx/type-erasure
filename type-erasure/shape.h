@@ -30,9 +30,6 @@
 // seeing the using declarations in ShapeModel::serialize() and
 // ShapeModel::draw(), as if the compiler does not see the `friend` definitions
 // within `class Shape`.
-class Shape;
-void serialize(const Shape& shape);
-void draw(const Shape& shape);
 
 template <typename T>
 void serialize(const T&) = delete;
@@ -40,14 +37,23 @@ void serialize(const T&) = delete;
 template <typename T>
 void draw(const T&) = delete;
 
-class Shape {
-  friend void serialize(const Shape& shape) {
-    shape.pimpl_->serialize();
-  }
+class Shape;
 
-  friend void draw(const Shape& shape) {
-    shape.pimpl_->draw();
-  }
+template <>
+void serialize(const Shape& shape);
+
+template <>
+void draw(const Shape& shape);
+
+template <typename T>
+concept IsShape = requires(T t) {
+  serialize(t);
+  draw(t);
+};
+
+class Shape {
+  friend void serialize<>(const Shape& shape);
+  friend void draw<>(const Shape& shape);
 
   friend std::ostream& operator<<(std::ostream& os, const Shape& shape) {
     return os << *shape.pimpl_;
@@ -112,7 +118,7 @@ class Shape {
 
  public:
   // A constructor template to create a bridge.
-  template <typename T>
+  template <IsShape T>
   Shape(const T& x)
       : pimpl_{new ShapeModel<T>(x)} {
   }
@@ -135,6 +141,16 @@ class Shape {
     return *this;
   }
 };
+
+template <>
+void serialize(const Shape& shape) {
+  shape.pimpl_->serialize();
+}
+
+template <>
+void draw(const Shape& shape) {
+  shape.pimpl_->draw();
+}
 
 #endif  // TYPE_ERASURE_SHAPE_H_
 
