@@ -12,17 +12,6 @@
 #include <memory>
 #include <vector>
 
-using namespace std;
-
-// CAUTION: The following forward declarations prevent the compiler from
-// complaining about missing global functions serialize() and draw() when
-// seeing the using declarations in ShapeModel::serialize() and
-// ShapeModel::draw(), as if the compiler did not see the `friend` definitions
-// within `class Shape`.
-class Shape;
-void serialize(const Shape& shape);
-void draw(const Shape& shape);
-
 // Deleting the following 2 function templates to avoid runaway recursion in
 // case a concrete Shape such as `Cicle` does not define a
 // `serialize(const Circle&)` or `draw(const Circle&)` function.
@@ -32,7 +21,20 @@ void serialize(const T&) = delete;
 template <typename T>
 void draw(const T&) = delete;
 
-// CAUTION: The following concept does not work with Apple clang 14.0.0.
+// CAUTION: The following forward declarations prevent the compiler from
+// complaining about missing global functions serialize() and draw() when
+// seeing the using declarations in ShapeModel::serialize() and
+// ShapeModel::draw(), as if the compiler did not see the `friend` definitions
+// within `class Shape`.
+class Shape;
+
+// NOTE: The specialization declarations are needed to avoid compilation errors.
+template <>
+void serialize(const Shape& shape);
+
+template <>
+void draw(const Shape& shape);
+
 template <typename T>
 concept IsShape = requires(T t) {
   serialize(t);
@@ -40,14 +42,14 @@ concept IsShape = requires(T t) {
 };
 
 class Shape {
-  friend void serialize(const Shape& shape) {
-    shape.pimpl_->serialize();
-  }
-
-  friend void draw(const Shape& shape) {
-    std::cout << "draw(const Shape& shape)\n";
-    shape.pimpl_->draw();
-  }
+  // NOTE: Definition of the explicit specialization has to appear separately
+  // later, otherwise it results in error such as:
+  //
+  // ```
+  // error: defining explicit specialization 'serialize<Shape>' in friend declaration
+  // ```
+  friend void serialize<Shape>(const Shape& shape);
+  friend void draw<Shape>(const Shape& shape);
 
   friend std::ostream& operator<<(std::ostream& os, const Shape& shape) {
     return os << *shape.pimpl_;
@@ -111,8 +113,7 @@ class Shape {
   std::unique_ptr<ShapeConcept> pimpl_;
 
  public:
-  // CAUTION: `template <IsShape T>` does not work with Apple clang 14.0.0.
-  template <typename T>
+  template <IsShape T>
   Shape(const T& x)
       : pimpl_{new ShapeModel<T>(x)} {
   }
@@ -135,6 +136,16 @@ class Shape {
     return *this;
   }
 };
+
+template <>
+void serialize(const Shape& shape) {
+  shape.pimpl_->serialize();
+}
+
+template <>
+void draw(const Shape& shape) {
+  shape.pimpl_->draw();
+}
 
 class Circle {
   double radius_;
