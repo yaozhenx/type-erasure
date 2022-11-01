@@ -5,7 +5,9 @@ Implementation of Klaus Iglberger's C++ Type Erasure Design Pattern.
 The code is based on Klaus Iglberger's talk "Breaking Dependencies: Type
 Erasure - A Design Analysis" on CppCon 2021.
 
-The code is tested with Apple clang 14.0.0 on macOS Ventura.
+The code is tested with:
+- Apple clang 14.0.0 on macOS Ventura (M1 Max MacBook Pro).
+- G++ 12.2.0 on on Ubuntu 20.0.4 on UTM (M1 Max MacBook Pro).
 
 It does NOT work with Homebrew GCC 12.2.0 on macOS Ventura.
 
