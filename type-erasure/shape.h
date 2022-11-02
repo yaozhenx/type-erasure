@@ -1,42 +1,51 @@
 // Type Erasure Sample Code.
 //
-// Based on "Breaking Dependencies: Type Erasure - A Design Analysis"
-// by Klaus Iglberger, CppCon 2021.
+// Implementation of Klaus Iglberger's C++ Type Erasure Design Pattern.
 //
 // References:
-// - https://meetingcpp.com/mcpp/slides/2021/Type%20Erasure%20-%20A%20Design%20Analysis9268.pdf
-// - https://www.youtube.com/watch?v=4eeESJQk-mw
+// - Breaking Dependencies: Type Erasure - A Design Analysis,
+//   by Klaus Iglberger, CppCon 2021.
+//   - Video: https://www.youtube.com/watch?v=4eeESJQk-mw
+//   - Slides: https://meetingcpp.com/mcpp/slides/2021/Type%20Erasure%20-%20A%20Design%20Analysis9268.pdf
 
 #ifndef TYPE_ERASURE_SHAPE_H_
 #define TYPE_ERASURE_SHAPE_H_
 
+#include <concepts>
 #include <iostream>
 #include <memory>
-#include <vector>
 
 // High Level Summary of the Design
-// - class Shape and global functions (serialize(), draw(), etc.)
+// - `class Shape` and global functions (`serialize()`, `draw()`, etc.)
 //   - The external client facing interface.
-//   - Holds a pointer to ShapeConcept.
-// - class ShapeConcept
+//   - Holds a pointer to `ShapeConcept` internally.
+// - `class ShapeConcept`
 //   - The internal interface of the Bridge Design Pattern.
-//   - It is needed to hide the template parameter of ShapeMode<T>.
-// - class ShapeModel<T>
-//   - The templated implementation of ShapeConcept.
+//   - It is needed to hide the template parameter of `ShapeModel<T>`.
+// - `class ShapeModel<T>`
+//   - The templated implementation of `ShapeConcept`.
 //   - Routes virtual functions to global functions.
-//
-// CAUTION: The following forward declarations prevent the compiler from
-// complaining about missing global functions serialize() and draw() when
-// seeing the using declarations in ShapeModel::serialize() and
-// ShapeModel::draw(), as if the compiler does not see the `friend` definitions
-// within `class Shape`.
 
+// CAUTION: The following deleted functions serves 2 purposes:
+// 1. Prevents the compiler from complaining about missing global functions
+//    `serialize()` and `draw()` when seeing the using declarations in
+//    `ShapeModel::serialize()` and `ShapeModel::draw()`, as if the compiler
+//    did not see the `friend` definitions within `class Shape`.
+// 2. Prevents runaway recursion in case a concrete `Shape` such as `Circle`
+//    does not define a `serialize(const Circle&)` or `draw(const Circle&)`
+//    function.
 template <typename T>
 void serialize(const T&) = delete;
 
 template <typename T>
 void draw(const T&) = delete;
 
+#ifdef __clang__
+
+// CAUTION: Workaround for clang.
+// The following forward declarations of explicit specialization of
+// `serialize()` and `draw()` prevent Clang from complaining about redefintion
+// errors.
 class Shape;
 
 template <>
@@ -45,15 +54,26 @@ void serialize(const Shape& shape);
 template <>
 void draw(const Shape& shape);
 
+#endif  // __clang__
+
 template <typename T>
 concept IsShape = requires(T t) {
   serialize(t);
   draw(t);
+  { std::declval<std::ostream&>() << t } -> std::same_as<std::ostream&>;
 };
 
 class Shape {
-  friend void serialize<>(const Shape& shape);
-  friend void draw<>(const Shape& shape);
+  // NOTE: Definition of the explicit specialization has to appear separately
+  // later outside of class `Shape`, otherwise it results in error such as:
+  //
+  // ```
+  // error: defining explicit specialization 'serialize<Shape>' in friend declaration
+  // ```
+  //
+  // Reference: https://en.cppreference.com/w/cpp/language/friend
+  friend void serialize<Shape>(const Shape& shape);
+  friend void draw<Shape>(const Shape& shape);
 
   friend std::ostream& operator<<(std::ostream& os, const Shape& shape) {
     return os << *shape.pimpl_;
@@ -77,7 +97,6 @@ class Shape {
     }
   };
 
-
   template <typename T>
   class ShapeModel : public ShapeConcept {
     T object_;
@@ -90,14 +109,14 @@ class Shape {
     void serialize() const override {
       // CAUTION: The using declaration tells the compiler to look up the free
       // serialize() function rather than the member function.
+      //
+      // Reference: https://stackoverflow.com/a/32091297/4475887
       using ::serialize;
 
       serialize(object_);
     }
 
     void draw() const override {
-      // CAUTION: The using declaration tells the compiler to look up the free
-      // draw() function rather than the member function.
       using ::draw;
 
       draw(object_);
