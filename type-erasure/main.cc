@@ -3,8 +3,8 @@
 #include <memory>
 #include <vector>
 
-#include "type-erasure/circle.h"
 #include "type-erasure/shape.h"
+#include "type-erasure/circle.h"
 #include "type-erasure/square.h"
 
 int main() {
