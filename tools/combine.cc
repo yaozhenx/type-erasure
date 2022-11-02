@@ -7,6 +7,7 @@
 // $ bazel run //tools:combine ${PWD}
 // ```
 
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -78,19 +79,27 @@ void combine(std::istream& is, std::ostream& os) {
   }
 }
 
-int main(int argc, char** argv) {
-  fs::path p = argc > 1 ? fs::absolute(argv[1]) : fs::current_path();
+bool cd_bazel_workspace(fs::path p) {
   while (!fs::exists(p / "WORKSPACE") &&
          !fs::exists(p / "WORKSPACE.bazel") &&
          p.parent_path() != p) {
-    std::cout << p << std::endl;
     p = p.parent_path();
   }
 
   if (!fs::exists(p / "WORKSPACE") &&
       !fs::exists(p / "WORKSPACE.bazel")) {
+    return false;
+  }
+
+  fs::current_path(p);
+  return true;
+}
+
+int main(int argc, char** argv) {
+  if (!cd_bazel_workspace(
+        argc > 1 ? fs::absolute(argv[1]) : fs::current_path())) {
     std::cerr << "Cannot find Bazel WORKSPACE!" << std::endl;
-    std::exit(1);
+    std::exit(EXIT_FAILURE);
   }
 
   std::ifstream is("type-erasure/main.cc");
