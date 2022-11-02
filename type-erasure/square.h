@@ -16,9 +16,7 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const Square& square);
-
 void serialize(const Square& square);
-
 void draw(const Square& square);
 
 #endif  // TYPE_ERASURE_SQUARE_H_

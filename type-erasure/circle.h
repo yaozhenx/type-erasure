@@ -16,9 +16,7 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const Circle& circle);
-
 void serialize(const Circle& circle);
-
 void draw(const Circle& circle);
 
 #endif  // TYPE_ERASURE_CIRCLE_H_

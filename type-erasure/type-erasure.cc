@@ -71,8 +71,8 @@ class Shape {
   // ```
   //
   // Reference: https://en.cppreference.com/w/cpp/language/friend
-  friend void serialize<Shape>(const Shape& shape);
-  friend void draw<Shape>(const Shape& shape);
+  friend void serialize<>(const Shape& shape);
+  friend void draw<>(const Shape& shape);
 
   friend std::ostream& operator<<(std::ostream& os, const Shape& shape) {
     return os << *shape.pimpl_;
