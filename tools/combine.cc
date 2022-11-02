@@ -1,3 +1,12 @@
+// Utility to generate the combined all-in-one version from
+// type-erasure/main.cc.
+//
+// Usage:
+//
+// ```bash
+// $ bazel run //tools:combine ${PWD}
+// ```
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -35,7 +44,7 @@ void parse(std::istream& is,
       system_includes.insert(line);
     } else if (std::regex_match(line, matches, custom_include_regex)) {
       if (custom_includes.insert(line).second) {
-        std::string header = "../../" + matches[1].str();
+        std::string header = matches[1].str();
         std::ifstream header_is(header);
         parse(header_is, system_includes, custom_includes, contents);
         if (header.ends_with(".h")) {
@@ -69,8 +78,22 @@ void combine(std::istream& is, std::ostream& os) {
   }
 }
 
-int main() {
-  std::ifstream is("../main.cc");
-  std::ofstream os("../type-erasure.cc");
+int main(int argc, char** argv) {
+  fs::path p = argc > 1 ? fs::absolute(argv[1]) : fs::current_path();
+  while (!fs::exists(p / "WORKSPACE") &&
+         !fs::exists(p / "WORKSPACE.bazel") &&
+         p.parent_path() != p) {
+    std::cout << p << std::endl;
+    p = p.parent_path();
+  }
+
+  if (!fs::exists(p / "WORKSPACE") &&
+      !fs::exists(p / "WORKSPACE.bazel")) {
+    std::cerr << "Cannot find Bazel WORKSPACE!" << std::endl;
+    std::exit(1);
+  }
+
+  std::ifstream is("type-erasure/main.cc");
+  std::ofstream os("type-erasure/type-erasure.cc");
   combine(is, os);
 }
