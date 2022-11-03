@@ -16,10 +16,12 @@
 
 namespace fs = std::filesystem;
 
-void parse(std::istream& is,
+void parse(const std::string& input,
            std::set<std::string>& system_includes,
            std::set<std::string>& custom_includes,
            std::vector<std::string>& contents) {
+  std::cout << "Reading " << input << std::endl;
+  std::ifstream is(input);
   std::string include_guard;
   std::regex include_guard_ifndef_regex("#ifndef (\\w+)");
   std::regex include_guard_define_regex("#define (\\w+)");
@@ -46,13 +48,11 @@ void parse(std::istream& is,
     } else if (std::regex_match(line, matches, custom_include_regex)) {
       if (custom_includes.insert(line).second) {
         std::string header = matches[1].str();
-        std::ifstream header_is(header);
-        parse(header_is, system_includes, custom_includes, contents);
+        parse(header, system_includes, custom_includes, contents);
         if (header.ends_with(".h")) {
           std::string src = header.substr(0, header.length() - 2) + ".cc";
           if (fs::exists(fs::path(src))) {
-            std::ifstream src_is(src);
-            parse(src_is, system_includes, custom_includes, contents);
+            parse(src, system_includes, custom_includes, contents);
           }
         }
       }
@@ -65,11 +65,12 @@ void parse(std::istream& is,
   }
 }
 
-void combine(std::istream& is, std::ostream& os) {
+void combine(const std::string& input, const std::string& output) {
   std::set<std::string> system_includes;
   std::set<std::string> custom_includes;
   std::vector<std::string> contents;
-  parse(is, system_includes, custom_includes, contents);
+  parse(input, system_includes, custom_includes, contents);
+  std::ofstream os(output);
   for (const auto& include : system_includes) {
     os << include << '\n';
   }
@@ -77,6 +78,7 @@ void combine(std::istream& is, std::ostream& os) {
   for (const auto& content : contents) {
     os << content << '\n';
   }
+  std::cout << "Writing " << output << std::endl;
 }
 
 bool cd_bazel_workspace(fs::path p) {
@@ -102,7 +104,6 @@ int main(int argc, char** argv) {
     std::exit(EXIT_FAILURE);
   }
 
-  std::ifstream is("type-erasure/main.cc");
-  std::ofstream os("type-erasure/type-erasure.cc");
-  combine(is, os);
+  combine("type-erasure/main.cc", "type-erasure/type-erasure.cc");
+  std::cout << "DONE!" << std::endl;
 }
