@@ -98,8 +98,11 @@ bool cd_bazel_workspace(fs::path p) {
 }
 
 int main(int argc, char** argv) {
-  if (!cd_bazel_workspace(
-        argc > 1 ? fs::absolute(argv[1]) : fs::current_path())) {
+  std::string cwd = std::getenv("BUILD_WORKING_DIRECTORY");
+  if (cwd.empty()) {
+    cwd = fs::current_path();
+  }
+  if (!cd_bazel_workspace(cwd)) {
     std::cerr << "Cannot find Bazel WORKSPACE!" << std::endl;
     std::exit(EXIT_FAILURE);
   }

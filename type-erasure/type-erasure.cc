@@ -182,6 +182,10 @@ public:
   }
 };
 
+std::ostream& operator<<(std::ostream& os, const Circle& circle);
+void serialize(const Circle& circle);
+void draw(const Circle& circle);
+
 std::ostream& operator<<(std::ostream& os, const Circle& circle) {
   return os << "Circle(radius = " << circle.radius() << ")";
 }
@@ -205,6 +209,10 @@ public:
     return width_;
   }
 };
+
+std::ostream& operator<<(std::ostream& os, const Square& square);
+void serialize(const Square& square);
+void draw(const Square& square);
 
 std::ostream& operator<<(std::ostream& os, const Square& square) {
   return os << "Square(width = " << square.width() << ")";
