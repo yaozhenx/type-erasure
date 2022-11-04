@@ -11,6 +11,25 @@ build:asan --copt -fno-omit-frame-pointer
 build:asan --linkopt -fsanitize=address
 build --copt -std=c++20
 
-# The following `debug` config is for using lldb.
+#run --run_under='cd "$BUILD_WORKING_DIRECTORY" && exec'
+
+# Use our custom-configured c++ toolchain.
+
+build:gcc_config --crosstool_top=//toolchain:gcc_suite
+
+# Use --cpu as a differentiator.
+
+build:gcc_config --cpu=k8
+
+# Use the default Bazel C++ toolchain to build the tools used during the
+# build.
+
+build:gcc_config --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+
+# Reference: https://github.com/bazelbuild/bazel/issues/4605#issuecomment-364174051
+build:gcc_config --copt -no-canonical-prefixes
+build:gcc_config --copt -fno-canonical-system-headers
+
+# The following `debug` config is for using lldb:
 build:debug -c dbg
 build:debug --features=oso_prefix_is_pwd
