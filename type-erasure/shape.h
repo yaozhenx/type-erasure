@@ -26,12 +26,12 @@
 //   - The templated implementation of `ShapeConcept`.
 //   - Routes virtual functions to global functions.
 
-// CAUTION: The following deleted functions serves 2 purposes:
-// 1. Prevents the compiler from complaining about missing global functions
+// CAUTION: The following deleted functions serve 2 purposes:
+// 1. Prevent the compiler from complaining about missing global functions
 //    `serialize()` and `draw()` when seeing the using declarations in
 //    `ShapeModel::serialize()` and `ShapeModel::draw()`, as if the compiler
 //    did not see the `friend` definitions within `class Shape`.
-// 2. Prevents runaway recursion in case a concrete `Shape` such as `Circle`
+// 2. Prevent runaway recursion in case a concrete `Shape` such as `Circle`
 //    does not define a `serialize(const Circle&)` or `draw(const Circle&)`
 //    function.
 template <typename T>
