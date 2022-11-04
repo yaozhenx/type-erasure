@@ -5,24 +5,36 @@ Implementation of Klaus Iglberger's C++ Type Erasure Design Pattern.
 The code is based on Klaus Iglberger's talk "Breaking Dependencies: Type
 Erasure - A Design Analysis" on CppCon 2021.
 
-The code is tested with:
-- Apple clang 14.0.0 on macOS Ventura (M1 Max MacBook Pro).
-- G++ 12.2.0 on on Ubuntu 22.10 on UTM (M1 Max MacBook Pro).
-
-It does NOT work with Homebrew GCC 12.2.0 on macOS Ventura.
+The code is tested on macOS Ventura with M1 Max CPU.
+- Apple clang 14.0.0.
+- GCC 12.2.0 on Ubuntu 22.10 on UTM.
+- GCC 12.2.0 with Homebrew.
+  - The single-file version works.
+  - The multiple-file version does not compile due to errors while running
+    `ar`.
 
 ## Usage
 
-Running the all-in-one version:
+### Running with Clang
+
+Running the single-file version:
 
 ```bash
-bazel run type-erasure/type-erasure
+bazel run //type-erasure:type-erasure
 ```
 
-Running the multi-file version:
+Running the multiple-file version:
 
 ```bash
-bazal run type-erasure/main
+bazal run //type-erasure:main
+```
+
+### Running with GCC (Homebrew) on macOS
+
+Running the single-file version:
+
+```bash
+bazel run --config=gcc_config //type-erasure:type-erasure
 ```
 
 ## References
