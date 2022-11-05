@@ -29,11 +29,13 @@
 // CAUTION: The following deleted functions serve 2 purposes:
 // 1. Prevent the compiler from complaining about missing global functions
 //    `serialize()` and `draw()` when seeing the using declarations in
-//    `ShapeModel::serialize()` and `ShapeModel::draw()`, as if the compiler
-//    did not see the `friend` definitions within `class Shape`.
-// 2. Prevent runaway recursion in case a concrete `Shape` such as `Circle`
+//    `ShapeModel::serialize()` and `ShapeModel::draw()`. (It seems like a
+//    compiler bug, as if the compiler did not see the `friend` definitions
+//    within `class Shape`.
+// 2. Prevent runaway recursions in case a concrete `Shape` such as `Circle`
 //    does not define a `serialize(const Circle&)` or `draw(const Circle&)`
-//    function.
+//    function. (Restricting class `Shape`'s template constructor parameter
+//    type to the `IsShape` concept below also prevents runaway recurions.)
 template <typename T>
 void serialize(const T&) = delete;
 
@@ -45,7 +47,7 @@ void draw(const T&) = delete;
 // CAUTION: Workaround for clang.
 // The following forward declarations of explicit specialization of
 // `serialize()` and `draw()` prevent Clang from complaining about redefintion
-// errors.
+// errors when seeing the definitions later.
 class Shape;
 
 template <>
