@@ -12,7 +12,7 @@ The code is tested on macOS Ventura with M1 Max CPU.
 
 ## Usage
 
-### Running with Clang
+### Running with native build environment (Clang on macOS or GCC on Linux)
 
 Running the single-file version:
 
@@ -26,7 +26,7 @@ Running the multiple-file version:
 bazal run //type-erasure:main
 ```
 
-### Running with GCC (Homebrew) on macOS
+### Running with GCC Homebrew on macOS
 
 Running the single-file version:
 
