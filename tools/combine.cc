@@ -100,7 +100,7 @@ bool cd_bazel_workspace(fs::path p) {
 }
 
 int main(int argc, char** argv) {
-  std::string cwd = std::getenv("BUILD_WORKING_DIRECTORY");
+  std::string cwd = std::getenv("BUILD_WORKSPACE_DIRECTORY");
   if (cwd.empty()) {
     cwd = fs::current_path();
   }

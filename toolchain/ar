@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# This is a wrapper around /usr/bin/ar to work around an unrecognized argeter
+# issue in Bazel GCC tool chain configs.
+
+args=()
+for arg in "${@}"; do
+  if [[ "${arg}" == rcsD ]]; then
+    arg=rcs
+  fi
+  args+=("${arg}")
+done
+/usr/bin/ar "${args[@]}"

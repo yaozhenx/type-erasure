@@ -9,9 +9,6 @@ The code is tested on macOS Ventura with M1 Max CPU.
 - Apple clang 14.0.0.
 - GCC 12.2.0 on Ubuntu 22.10 on UTM.
 - GCC 12.2.0 with Homebrew.
-  - The single-file version works.
-  - The multiple-file version does not compile due to errors while running
-    `ar`.
 
 ## Usage
 
@@ -35,6 +32,12 @@ Running the single-file version:
 
 ```bash
 bazel run --config=gcc_config //type-erasure:type-erasure
+```
+
+Running the multiple-file version:
+
+```bash
+bazel run --config=gcc_config --action_env=WORKSPACE_DIR=${PWD} type-erasure/main
 ```
 
 ## References
