@@ -99,10 +99,12 @@ make -C type-erasure run-type-erasure
 
 - Breaking Dependencies: Type Erasure - A Design Analysis - Klaus Iglberger -
   CppCon 2021
-  - Video, https://www.youtube.com/watch?v=4eeESJQk-mw
+  - Video, https://www.youtube.com/watch?v=4eeESJQk-mw, https://www.youtube.com/watch?v=jKt6A3wnDyI
   - Slides, https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/09/Type-Erasure-A-Design-Analysis.pdf
 
 - Better Code: Runtime Polymorphism - Sean Parent
   - Video, https://www.youtube.com/watch?v=QGcVXgEVMJg
   - Slides, https://sean-parent.stlab.cc/presentations/2017-01-18-runtime-polymorphism/2017-01-18-runtime-polymorphism.pdf
+
+- Kevlin Henney, C++ Report 12(7), July/August 2000, entitled, Valued Conversions.
 
