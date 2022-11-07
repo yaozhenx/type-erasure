@@ -101,3 +101,8 @@ make -C type-erasure run-type-erasure
   CppCon 2021
   - Video, https://www.youtube.com/watch?v=4eeESJQk-mw
   - Slides, https://cppcon.digital-medium.co.uk/wp-content/uploads/2021/09/Type-Erasure-A-Design-Analysis.pdf
+
+- Better Code: Runtime Polymorphism - Sean Parent
+  - Video, https://www.youtube.com/watch?v=QGcVXgEVMJg
+  - Slides, https://sean-parent.stlab.cc/presentations/2017-01-18-runtime-polymorphism/2017-01-18-runtime-polymorphism.pdf
+
