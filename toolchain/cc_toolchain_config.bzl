@@ -14,24 +14,6 @@ all_link_actions = [
     ACTION_NAMES.cpp_link_nodeps_dynamic_library,
 ]
 
-def dirname(p):
-    """Returns the dirname of a path.
-    The dirname is the portion of `p` up to but not including the file portion
-    (i.e., the basename). Any slashes immediately preceding the basename are not
-    included, unless omitting them would make the dirname empty.
-    Args:
-      p: The path whose dirname should be returned.
-    Returns:
-      The dirname of the path.
-    """
-    prefix, sep, _ = p.rpartition("/")
-    if not prefix:
-        return sep
-    else:
-        # If there are multiple consecutive slashes, strip them all out as Python's
-        # os.path.dirname does.
-        return prefix.rstrip("/")
-
 def _impl(ctx):
     tool_paths = [
         tool_path(
