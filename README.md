@@ -5,10 +5,15 @@ Implementation of Klaus Iglberger's C++ Type Erasure Design Pattern.
 The code is based on Klaus Iglberger's talk "Breaking Dependencies: Type
 Erasure - A Design Analysis" on CppCon 2021.
 
-The code is tested on macOS Ventura with M1 Max CPU.
+The code is written in C++20 and tested on macOS Ventura with M1 Max CPU.
 - Apple clang 14.0.0.
 - GCC 12.2.0 on Ubuntu 22.10 on UTM.
 - GCC 12.2.0 with Homebrew.
+
+## Intent
+
+Implement subtyping and runtime polymorphism without coupling of the interface
+and concrete classes.
 
 ## Requirements
 
@@ -27,27 +32,29 @@ The code is tested on macOS Ventura with M1 Max CPU.
 
 Taking the `Shape` hierarchy as an example.
 
-- `class Shape` and global functions (`serialize()`, `draw()`, etc.)
+1. `class Shape` and global functions (`serialize()`, `draw()`, etc.)
   - The external client facing interface.
   - Holds a pointer to `ShapeConcept` internally.
-- `class ShapeConcept`
+
+2. `class ShapeConcept`
   - The internal interface of the Bridge Design Pattern.
   - It is needed to hide the template parameter of `ShapeModel<T>`.
-- `class ShapeModel<T>`
+
+3. `class ShapeModel<T>`
   - The templated implementation of `ShapeConcept`.
   - Routes virtual functions to global functions.
 
-## Usage
+## Build and Run with Bazel
 
 ### Running with native build environment (Clang on macOS or GCC on Linux)
 
-Running the single-file version:
+Run the single-file version:
 
 ```bash
 bazel run //type-erasure:type-erasure
 ```
 
-Running the multiple-file version:
+Run the multiple-file version:
 
 ```bash
 bazal run //type-erasure:main
@@ -55,17 +62,38 @@ bazal run //type-erasure:main
 
 ### Running with GCC Homebrew on macOS
 
-Running the single-file version:
+Run the single-file version:
 
 ```bash
 bazel run --config=gcc_config //type-erasure:type-erasure
 ```
 
-Running the multiple-file version:
+Run the multiple-file version:
 
 ```bash
 bazel run --config=gcc_config --action_env=WORKSPACE_DIR=${PWD} type-erasure/main
 ```
+
+## Build and Run with Make
+
+Run the multiple-file version:
+
+```bash
+make run
+```
+
+Run the single-file version:
+
+```bash
+make -C type-erasure run-type-erasure
+```
+
+## Dependencies
+
+- (optional) Bazel (https://bazel.build/)
+  - How to install: https://github.com/bazelbuild/bazelisk
+
+- (optional) Make
 
 ## References
 
