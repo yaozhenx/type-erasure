@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This is a wrapper around /usr/bin/ar to work around an unrecognized argeter
+# This is a wrapper around /usr/bin/ar to work around an unrecognized argument
 # issue in Bazel GCC tool chain configs.
 
 args=()
